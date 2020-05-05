@@ -15,7 +15,7 @@ class ajaxController extends Controller
      * @author Tariq Tawalbeh
     */
 
-	public function getTwitterFeeds($start, $end) {
+	public function getTwitterFeeds($count) {
 	     
 	    $url = 'https://twitter.com/Eng_TawTareq';
 
@@ -26,7 +26,6 @@ class ajaxController extends Controller
 	    }
 	    //page name or page id
 	    $PageId = $matches[1];
-
 	    $PageId = 'UnitedNationsJO';
 	    $token = env('TOKEN');
 		$token_secret = env('TOKEN_SECRET');
@@ -40,7 +39,7 @@ class ajaxController extends Controller
 
 		$query = array(// query parameters
 			'screen_name' => $PageId,
-			'count' => '50',
+			'count' => $count,
 			'include_rts' => false
 		);
 
@@ -102,6 +101,7 @@ class ajaxController extends Controller
 		curl_setopt_array($feed, $options);
 		$json = curl_exec($feed);
 		curl_close($feed);
+		sleep(0.75);
 		echo $json;die;	    
 	}
 }
