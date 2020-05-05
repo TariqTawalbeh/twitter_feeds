@@ -14,4 +14,4 @@
 Route::get('/', function () {
     return view('twitter_welcome');
 });
-Route::get('/ajax/twitter', 'ajaxController@getTwitterFeeds');
+Route::get('/ajax/twitter/{start}/{end}', 'ajaxController@getTwitterFeeds');
