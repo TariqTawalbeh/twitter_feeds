@@ -1,32 +1,32 @@
 <head>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>    
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script> 
-    
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
 </head>
 
 <body>
     <div class="container">
         <div class="row">
          <h2>Twitter Tweets</h2>
-        <ul class="ds-btn">         
+        <ul class="ds-btn">
             <li>
                 <a class="btn btn-lg btn-info" href="#" id="english_tweets">
-                <i class="glyphicon glyphicon-list pull-left"></i><span>English Tweets<br><small>@UnitedNationsJO</small></span></a> 
+                <i class="glyphicon glyphicon-list pull-left"></i><span>English Tweets<br><small>@UnitedNationsJO</small></span></a>
             </li>
             <li>
                 <a class="btn btn-lg btn-info" href="#" id="arabic_tweets">
-                <i class="glyphicon glyphicon-list pull-left"></i><span>Arabic Tweets<br><small>@UnitedNationsJO</small></span></a> 
+                <i class="glyphicon glyphicon-list pull-left"></i><span>Arabic Tweets<br><small>@UnitedNationsJO</small></span></a>
             </li>
         </ul>
-        
+
         </div>
     </div>
 
 <div class="container mt-5 mb-5">
     <div class="row">
         <div class="col-md-6 offset-md-3" id="tweets">
-            
+
         </div>
     </div>
 </div>
@@ -67,66 +67,7 @@
             width: 20px;
             height: 20px;
             z-index: 400;
-        }        
-</style> 
-
-<script type="text/javascript">
-    $('#english_tweets').on('click', function (e) {
-    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    e.preventDefault();
-    $.ajax({
-        type: "GET",
-        url: '/ajax/twitter',
-        success: function( output ) {
-            $("#tweets").empty();
-            var obj = JSON.parse(output);
-            $(obj).each(function( index, value){
-                if(value.lang == 'en'){
-                     var startTime = new Date(value.created_at);
-
-                    $("#tweets").append(
-                        '<ul class="timeline">'+
-                            '<li>'+
-                                '<a href="#" class="float-right">'+ months[startTime.getMonth()] + ', '+ startTime.getDay() + ' ' + startTime.getFullYear() +'</a>'+
-                                '<p>'+value.text+'</p>'+
-                            '</li>'+
-                        '</ul>'
-                    );
-                }
-            });
-                }
-        
-    });
-});
-
-    $('#arabic_tweets').on('click', function (e) {
-    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    e.preventDefault();
-    $.ajax({
-        type: "GET",
-        url: '/ajax/twitter',
-        success: function( output ) {
-            $("#tweets").empty();
-            var obj = JSON.parse(output);
-            $(obj).each(function( index, value){
-                if(value.lang == 'ar'){
-                     var startTime = new Date(value.created_at);
-
-                    $("#tweets").append(
-                        '<ul class="timeline">'+
-                            '<li>'+
-                                '<a href="#" class="float-right">'+ months[startTime.getMonth()] + ', '+ startTime.getDay() + ' ' + startTime.getFullYear() +'</a>'+
-                                '<p>'+value.text+'</p>'+
-                            '</li>'+
-                        '</ul>'
-                    );
-                }
-            });
-                }
-        
-    });
-});
-
-</script>   
+        }
+</style>
+<script src="{{ URL::asset('js/tweets.js') }}"></script>
 </body>
-
