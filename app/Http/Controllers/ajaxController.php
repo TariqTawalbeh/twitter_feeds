@@ -15,9 +15,8 @@ class ajaxController extends Controller
      * @author Tariq Tawalbeh
     */
 
-	public function getTwitterFeeds() {
+	public function getTwitterFeeds($start, $end) {
 	     
-	    
 	    $url = 'https://twitter.com/Eng_TawTareq';
 
 	    
@@ -29,80 +28,80 @@ class ajaxController extends Controller
 	    $PageId = $matches[1];
 
 	    $PageId = 'UnitedNationsJO';
-	    $token = '1322735486-IwPcAxffIBhWeHZT1XldW3VqD4LNdGrUqMF3ewA';
-	        $token_secret = 'Quhyx9rtjiRB45NoGQmyWK8L6zq4Jxb3zHKxDHSMX5SWZ';
-	        $consumer_key = 'r5OdTex1cn0cez6x6dJWNAMgS';
-	        $consumer_secret = 'Ib9q2rj7CTPDLm2VPYPE27bYrciSoYoBnJmg9qv08geocffNDz';
+	    $token = env('TOKEN');
+		$token_secret = env('TOKEN_SECRET');
+		$consumer_key = env('CONSUMER_KEY');
+		$consumer_secret = env('CONSUMER_SECRET');
 
-	        $host = 'api.twitter.com';
-	        $method = 'GET';
-	        $path = '/1.1/statuses/user_timeline.json'; 
-	       // api call path
+		$host = 'api.twitter.com';
+		$method = 'GET';
+		$path = '/1.1/statuses/user_timeline.json'; 
+		// api call path
 
-	        $query = array(// query parameters
-	            'screen_name' => $PageId,
-	            'count' => '50',
-	            'include_rts' => false
-	        );
+		$query = array(// query parameters
+			'screen_name' => $PageId,
+			'count' => '50',
+			'include_rts' => false
+		);
 
-	        $oauth = array(
-	            'oauth_consumer_key' => $consumer_key,
-	            'oauth_token' => $token,
-	            'oauth_nonce' => (string) mt_rand(), 
-	            'oauth_timestamp' => time(),
-	            'oauth_signature_method' => 'HMAC-SHA1',
-	            'oauth_version' => '1.0'
-	        );
+		$oauth = array(
+			'oauth_consumer_key' => $consumer_key,
+			'oauth_token' => $token,
+			'oauth_nonce' => (string) mt_rand(), 
+			'oauth_timestamp' => time(),
+			'oauth_signature_method' => 'HMAC-SHA1',
+			'oauth_version' => '1.0'
+		);
 
-	        $oauth = array_map("rawurlencode", $oauth); 
-	        $query = array_map("rawurlencode", $query);
+		$oauth = array_map("rawurlencode", $oauth); 
+		$query = array_map("rawurlencode", $query);
 
-	        $arr = array_merge($oauth, $query); // combine the values THEN sort
+		$arr = array_merge($oauth, $query); // combine the values THEN sort
 
-	        asort($arr); // secondary sort (value)
-	        ksort($arr); // primary sort (key)
-	        // http_build_query automatically encodes, but our parameters
-	        // are already encoded, and must be by this point, so we undo
-	        // the encoding step
-	        $querystring = urldecode(http_build_query($arr, '', '&'));
+		asort($arr); // secondary sort (value)
+		ksort($arr); // primary sort (key)
+		// http_build_query automatically encodes, but our parameters
+		// are already encoded, and must be by this point, so we undo
+		// the encoding step
+		$querystring = urldecode(http_build_query($arr, '', '&'));
 
-	        $url = "https://$host$path";
+		$url = "https://$host$path";
 
-	        // gather everything together for the text to hash
-	        $base_string = $method . "&" . rawurlencode($url) . "&" . rawurlencode($querystring);
+		// gather everything together for the text to hash
+		$base_string = $method . "&" . rawurlencode($url) . "&" . rawurlencode($querystring);
 
-	        // same with the key
-	        $key = rawurlencode($consumer_secret) . "&" . rawurlencode($token_secret);
+		// same with the key
+		$key = rawurlencode($consumer_secret) . "&" . rawurlencode($token_secret);
 
-	        // generate the hash
-	        $signature = rawurlencode(base64_encode(hash_hmac('sha1', $base_string, $key, true)));
+		// generate the hash
+		$signature = rawurlencode(base64_encode(hash_hmac('sha1', $base_string, $key, true)));
 
-        	// GET query 
-	        $url .= "?" . http_build_query($query);
-	        $url = str_replace("&amp;", "&", $url); 
+		// GET query 
+		$url .= "?" . http_build_query($query);
+		$url = str_replace("&amp;", "&", $url); 
 
-	        $oauth['oauth_signature'] = $signature; 
-	        ksort($oauth); // probably not necessary, but twitter's demo does it
-	        // also not necessary, but twitter's demo does this too
+		$oauth['oauth_signature'] = $signature; 
+		ksort($oauth); // probably not necessary, but twitter's demo does it
+		// also not necessary, but twitter's demo does this too
 
-	        function add_quotes($str) {
-	            return '"' . $str . '"';
-	        }
+		function add_quotes($str) {
+			return '"' . $str . '"';
+		}
 
-	        // this is the full value of the Authorization line
-	        $auth = "OAuth " . urldecode(http_build_query($oauth, '', ', '));
+		// this is the full value of the Authorization line
+		$auth = "OAuth " . urldecode(http_build_query($oauth, '', ', '));
 
-	        $options = array(CURLOPT_HTTPHEADER => array("Authorization: $auth"),
-	            CURLOPT_HEADER => false,
-	            CURLOPT_URL => $url,
-	            CURLOPT_RETURNTRANSFER => true,
-	            CURLOPT_SSL_VERIFYPEER => false);
+		$options = array(CURLOPT_HTTPHEADER => array("Authorization: $auth"),
+			CURLOPT_HEADER => false,
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_SSL_VERIFYPEER => false);
 
-	        // final step to get the results 
-	        $feed = curl_init();
-	        curl_setopt_array($feed, $options);
-	        $json = curl_exec($feed);
-	        curl_close($feed);
-			echo $json;die;	    
+		// final step to get the results 
+		$feed = curl_init();
+		curl_setopt_array($feed, $options);
+		$json = curl_exec($feed);
+		curl_close($feed);
+		echo $json;die;	    
 	}
 }

@@ -1,8 +1,19 @@
 <head>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-
+    <script id="tweet" type="text/x-handlebars-template">
+        <ul class="timeline">
+            <li>
+                <a href="#" class="float-right">
+                    @{{ contents }}
+                </a>
+                <p>
+                    @{{ value }}
+                </p>
+            </li>
+        </ul>
+    </script>
+    <script src="{{ URL::asset('js/tweets.js') }}"></script>
 </head>
 
 <body>
@@ -11,12 +22,12 @@
          <h2>Twitter Tweets</h2>
         <ul class="ds-btn">
             <li>
-                <a class="btn btn-lg btn-info" href="#" id="english_tweets">
-                <i class="glyphicon glyphicon-list pull-left"></i><span>English Tweets<br><small>@UnitedNationsJO</small></span></a>
+                <button class="btn btn-lg btn-info tweets-btn"  data-lang="en"  id="english_tweets">
+                <i class="glyphicon glyphicon-list pull-left"></i><span>English Tweets<br><small>@UnitedNationsJO</small></span></button>
             </li>
             <li>
-                <a class="btn btn-lg btn-info" href="#" id="arabic_tweets">
-                <i class="glyphicon glyphicon-list pull-left"></i><span>Arabic Tweets<br><small>@UnitedNationsJO</small></span></a>
+                <button class="btn btn-lg btn-info tweets-btn" data-lang="ar" id="arabic_tweets">
+                <i class="glyphicon glyphicon-list pull-left"></i><span>Arabic Tweets<br><small>@UnitedNationsJO</small></span></button>
             </li>
         </ul>
 
@@ -26,7 +37,6 @@
 <div class="container mt-5 mb-5">
     <div class="row">
         <div class="col-md-6 offset-md-3" id="tweets">
-
         </div>
     </div>
 </div>
@@ -69,5 +79,4 @@
             z-index: 400;
         }
 </style>
-<script src="{{ URL::asset('js/tweets.js') }}"></script>
 </body>
