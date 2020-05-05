@@ -1,6 +1,6 @@
 let counter;
 let selected_language;
-const limit = 20;
+const limit = 40;
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('button').forEach(button => {
         button.onclick = () => {
@@ -13,7 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
 });
-
+// If scrolled to bottom, load the next 20 posts.
+window.onscroll = () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight){
+        tweets(selected_language);
+    }
+}
+ 
 // Get tweetes from the server.
 function tweets(language) {
     const start = counter;
@@ -21,7 +27,7 @@ function tweets(language) {
     counter = end +1;
     var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const request = new XMLHttpRequest();
-    request.open('GET', '/ajax/twitter/'+ start +'/' + end)
+    request.open('GET', '/ajax/twitter/'+ end)
     request.onload = () => {
         const data = JSON.parse(request.responseText);
         data.forEach(function(value) {
