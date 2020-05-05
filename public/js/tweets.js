@@ -1,30 +1,47 @@
-$('#english_tweets').on('click', e => {tweets(e, 'en')});
-$('#arabic_tweets').on('click', e => {tweets(e, 'ar')});
-
-function tweets(e, labguage) {
-    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    e.preventDefault();
-    $.ajax({
-        type: "GET",
-        url: '/ajax/twitter',
-        success: function( output ) {
-            $("#tweets").empty();
-            var obj = JSON.parse(output);
-            $(obj).each(function( index, value){
-                if(value.lang == labguage){
-                    var startTime = new Date(value.created_at);
-
-                    $("#tweets").append(
-                        '<ul class="timeline">'+
-                            '<li>'+
-                                '<a href="#" class="float-right">'+ months[startTime.getMonth()] + ', '+ startTime.getDay() + ' ' + startTime.getFullYear() +'</a>'+
-                                '<p>'+value.text+'</p>'+
-                            '</li>'+
-                        '</ul>'
-                    );
-                }
-            });
-        }
-
+let counter;
+let selected_language;
+const limit = 20;
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('button').forEach(button => {
+        button.onclick = () => {
+            // Reset the counter on click.
+            counter = 0;
+            document.querySelector('#tweets').innerHTML = '';
+            const language = button.dataset.lang;
+            selected_language = language;
+            tweets(language)
+        };
     });
+});
+
+// Get tweetes from the server.
+function tweets(language) {
+    const start = counter;
+    const end = start + limit -1;
+    counter = end +1;
+    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const request = new XMLHttpRequest();
+    request.open('GET', '/ajax/twitter/'+ start +'/' + end)
+    request.onload = () => {
+        const data = JSON.parse(request.responseText);
+        data.forEach(function(value) {
+            if(value.lang == language)
+            {
+                var startTime = new Date(value.created_at);
+                const contents = months[startTime.getMonth()] + ', '+ startTime.getDay() + ' ' + startTime.getFullYear();
+                const textvalue = value.text;
+                add_tweet(contents, textvalue);
+            }
+        });
+    }
+    request.send();
+}
+
+const tweet_template = Handlebars.compile(document.querySelector('#tweet').innerHTML);
+function add_tweet(contents, value) {
+    // Create new tweet.
+    const tweet = tweet_template({'contents': contents, 'value': value});
+
+    // Add tweet to DOM.
+    document.querySelector("#tweets").innerHTML += tweet
 }
